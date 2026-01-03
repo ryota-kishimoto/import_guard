@@ -1,0 +1,4 @@
+name: packages_monorepo
+
+packages:
+  - packages/**
