@@ -3,7 +3,7 @@ description: Example package to test import_guard
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.9.0
 
 dependencies:
   # Fake packages for testing
