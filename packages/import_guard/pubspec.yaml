@@ -1,0 +1,14 @@
+name: import_guard
+description: A custom_lint package to guard imports between packages/folders.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  analyzer: ^8.0.0
+  analyzer_plugin: ^0.13.0
+  custom_lint_builder: ^0.8.0
+  yaml: ^3.1.0
+  path: ^1.9.0

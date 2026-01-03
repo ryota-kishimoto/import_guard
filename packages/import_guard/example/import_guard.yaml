@@ -1,0 +1,4 @@
+deny:
+  - dart:mirrors        # mirrors禁止（例）
+  - package:http        # httpパッケージ禁止（例）
+  - package:domain/repository/**  # domain/repository配下禁止（例）
