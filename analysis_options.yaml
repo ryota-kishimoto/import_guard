@@ -1,5 +1,5 @@
 analyzer:
   exclude:
-    - example/**
+    - "**/example/**"
   errors:
     deprecated_member_use: ignore
