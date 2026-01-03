@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+// TODO: Migrate to DiagnosticSeverity/DiagnosticReporter when custom_lint_builder supports it
 import 'dart:io';
 
 import 'package:analyzer/error/error.dart' show ErrorSeverity;
