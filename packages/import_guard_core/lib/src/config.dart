@@ -55,29 +55,30 @@ class ImportGuardConfig {
 }
 
 /// Cache for import_guard.yaml configurations.
-/// Scans all configs once per package root for better performance.
+/// Scans all configs once per repo root for better performance.
 class ConfigCache {
   static final _instance = ConfigCache._();
   factory ConfigCache() => _instance;
   ConfigCache._();
 
-  /// Map: packageRoot -> (Map: configDir -> config)
-  final _cache = <String, Map<String, ImportGuardConfig>>{};
-
-  /// Map: packageRoot -> packageName
-  final _packageNames = <String, String?>{};
+  /// Map: repoRoot -> (Map: configDir -> config)
+  /// Shared across all packages in the same repo.
+  final _configsByRepo = <String, Map<String, ImportGuardConfig>>{};
 
   /// Map: packageRoot -> repoRoot
   final _repoRoots = <String, String>{};
 
+  /// Map: packageRoot -> packageName
+  final _packageNames = <String, String?>{};
+
   /// Get all applicable configs for a file path.
   /// Returns configs from file's directory up to repo root.
   List<ImportGuardConfig> getConfigsForFile(String filePath, String packageRoot) {
-    _ensureLoaded(packageRoot);
+    final repoRoot = _getRepoRoot(packageRoot);
+    _ensureRepoLoaded(repoRoot);
 
     final configs = <ImportGuardConfig>[];
-    final allConfigs = _cache[packageRoot] ?? {};
-    final repoRoot = _repoRoots[packageRoot] ?? packageRoot;
+    final allConfigs = _configsByRepo[repoRoot] ?? {};
 
     var dir = p.dirname(filePath);
     while (true) {
@@ -94,7 +95,9 @@ class ConfigCache {
 
   /// Get cached package name.
   String? getPackageName(String packageRoot) {
-    _ensureLoaded(packageRoot);
+    if (!_packageNames.containsKey(packageRoot)) {
+      _packageNames[packageRoot] = _loadPackageName(packageRoot);
+    }
     return _packageNames[packageRoot];
   }
 
@@ -111,20 +114,21 @@ class ConfigCache {
     return null;
   }
 
-  /// Load all import_guard.yaml files (once per package root).
-  void _ensureLoaded(String packageRoot) {
-    if (_cache.containsKey(packageRoot)) return;
+  /// Get repo root for a package, with caching.
+  String _getRepoRoot(String packageRoot) {
+    if (!_repoRoots.containsKey(packageRoot)) {
+      _repoRoots[packageRoot] = _findRepoRoot(packageRoot);
+    }
+    return _repoRoots[packageRoot]!;
+  }
 
-    final repoRoot = _findRepoRoot(packageRoot);
-    _repoRoots[packageRoot] = repoRoot;
+  /// Load all import_guard.yaml files (once per repo root).
+  void _ensureRepoLoaded(String repoRoot) {
+    if (_configsByRepo.containsKey(repoRoot)) return;
 
     final configs = <String, ImportGuardConfig>{};
-
-    // Scan from repo root (includes package root and ancestors)
     _scanDirectory(Directory(repoRoot), configs);
-
-    _cache[packageRoot] = configs;
-    _packageNames[packageRoot] = _loadPackageName(packageRoot);
+    _configsByRepo[repoRoot] = configs;
   }
 
   /// Find repo root by looking for .git directory.

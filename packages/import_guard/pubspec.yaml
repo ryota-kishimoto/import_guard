@@ -15,4 +15,4 @@ environment:
 dependencies:
   analysis_server_plugin: ^0.3.0
   analyzer: ^8.0.0
-  import_guard_core: ^0.0.2
+  import_guard_core: ^0.0.3

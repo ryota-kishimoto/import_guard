@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3
+
+- Fix: share config cache across packages in monorepo (performance improvement)
+
 ## 0.0.2
 
 - Update repository URL
