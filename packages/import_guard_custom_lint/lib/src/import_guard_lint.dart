@@ -6,20 +6,13 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 import 'package:import_guard_core/import_guard_core.dart';
 
 class ImportGuardLint extends DartLintRule {
-  factory ImportGuardLint({ErrorSeverity severity = ErrorSeverity.WARNING}) {
-    final code = LintCode(
-      name: 'import_guard',
-      problemMessage: 'This import is not allowed: {0}',
-      errorSeverity: severity,
-    );
-    return ImportGuardLint._(code);
-  }
+  ImportGuardLint() : super(code: _code);
 
-  ImportGuardLint._(LintCode code)
-      : _code = code,
-        super(code: code);
-
-  final LintCode _code;
+  static const _code = LintCode(
+    name: 'import_guard',
+    problemMessage: 'This import is not allowed: {0}',
+    errorSeverity: ErrorSeverity.WARNING,
+  );
   final _configCache = ConfigCache();
 
   /// Cache for package root lookups to avoid repeated filesystem traversal.
