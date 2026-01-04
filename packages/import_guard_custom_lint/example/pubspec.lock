@@ -181,10 +181,10 @@ packages:
     dependency: transitive
     description:
       name: import_guard_core
-      sha256: "4f52ca21936c6a3ce4dbb5379ba648733b37e4d20cf763148776aaf83d37765a"
+      sha256: "0333b023e59e1e64cf4f2111170e2e677dc969662bc61ac7f857a7ea85e376e7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2"
   import_guard_custom_lint:
     dependency: "direct dev"
     description:
