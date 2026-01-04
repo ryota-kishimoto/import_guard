@@ -8,6 +8,8 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
+import 'pattern_matcher.dart';
+
 /// Configuration for import_guard loaded from import_guard.yaml
 class ImportGuardConfig {
   final List<String> deny;
@@ -164,14 +166,17 @@ class ImportGuardLint extends DartLintRule {
       if (importUri == null) return;
 
       for (final config in configs) {
+        final matcher = PatternMatcher(
+          configDir: config.configDir,
+          packageRoot: packageRoot,
+          packageName: packageName,
+        );
+
         for (final pattern in config.deny) {
-          if (_matchesPattern(
+          if (matcher.matches(
             importUri: importUri,
             pattern: pattern,
-            configDir: config.configDir,
             filePath: filePath,
-            packageRoot: packageRoot,
-            packageName: packageName,
           )) {
             reporter.atNode(
               node,
@@ -194,95 +199,5 @@ class ImportGuardLint extends DartLintRule {
       dir = dir.parent;
     }
     return null;
-  }
-
-  bool _matchesPattern({
-    required String importUri,
-    required String pattern,
-    required String configDir,
-    required String filePath,
-    required String packageRoot,
-    required String? packageName,
-  }) {
-    if (pattern.startsWith('./') || pattern.startsWith('../')) {
-      return _matchesRelativePattern(
-        importUri: importUri,
-        pattern: pattern,
-        configDir: configDir,
-        filePath: filePath,
-        packageRoot: packageRoot,
-        packageName: packageName,
-      );
-    }
-    return _matchesAbsolutePattern(importUri, pattern);
-  }
-
-  bool _matchesRelativePattern({
-    required String importUri,
-    required String pattern,
-    required String configDir,
-    required String filePath,
-    required String packageRoot,
-    required String? packageName,
-  }) {
-    final resolvedPatternPath = p.normalize(p.join(configDir, pattern));
-
-    if (importUri.startsWith('.')) {
-      final fileDir = p.dirname(filePath);
-      final resolvedImportPath = p.normalize(p.join(fileDir, importUri));
-      return _pathMatchesPattern(resolvedImportPath, resolvedPatternPath);
-    }
-
-    if (packageName != null && importUri.startsWith('package:$packageName/')) {
-      final importPath = importUri.substring('package:$packageName/'.length);
-      final absoluteImportPath = p.join(packageRoot, 'lib', importPath);
-      return _pathMatchesPattern(absoluteImportPath, resolvedPatternPath);
-    }
-
-    return false;
-  }
-
-  bool _pathMatchesPattern(String path, String pattern) {
-    String patternBase = pattern;
-    bool matchChildren = false;
-    bool matchAll = false;
-
-    if (pattern.endsWith('/**')) {
-      patternBase = pattern.substring(0, pattern.length - 3);
-      matchAll = true;
-    } else if (pattern.endsWith('/*')) {
-      patternBase = pattern.substring(0, pattern.length - 2);
-      matchChildren = true;
-    }
-
-    patternBase = p.normalize(patternBase);
-
-    if (matchAll) {
-      return path.startsWith(patternBase);
-    }
-
-    if (matchChildren) {
-      if (!path.startsWith('$patternBase${p.separator}')) return false;
-      final remainder = path.substring(patternBase.length + 1);
-      return !remainder.contains(p.separator);
-    }
-
-    return path == patternBase || path.startsWith('$patternBase${p.separator}');
-  }
-
-  bool _matchesAbsolutePattern(String importUri, String pattern) {
-    if (pattern.endsWith('/**')) {
-      final prefix = pattern.substring(0, pattern.length - 3);
-      return importUri.startsWith(prefix);
-    }
-
-    if (pattern.endsWith('/*')) {
-      final prefix = pattern.substring(0, pattern.length - 2);
-      if (!importUri.startsWith('$prefix/')) return false;
-      final remainder = importUri.substring(prefix.length + 1);
-      return !remainder.contains('/');
-    }
-
-    return importUri == pattern || importUri.startsWith('$pattern/');
   }
 }
