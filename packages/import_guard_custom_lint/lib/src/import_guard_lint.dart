@@ -6,7 +6,7 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 import 'package:import_guard_core/import_guard_core.dart';
 
 class ImportGuardLint extends DartLintRule {
-  factory ImportGuardLint({ErrorSeverity severity = ErrorSeverity.ERROR}) {
+  factory ImportGuardLint({ErrorSeverity severity = ErrorSeverity.WARNING}) {
     final code = LintCode(
       name: 'import_guard',
       problemMessage: 'This import is not allowed: {0}',

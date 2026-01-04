@@ -29,14 +29,14 @@ analyzer:
 
 ### 重大度の設定（オプション）
 
-デフォルトでは違反はエラーとして報告されます。`warning`や`info`に変更可能:
+デフォルトでは違反はwarningとして報告されます。`error`や`info`に変更可能:
 
 ```yaml
 # analysis_options.yaml
 custom_lint:
   rules:
     - import_guard:
-      severity: warning  # error（デフォルト）, warning, info
+      severity: error  # warning（デフォルト）, error, info
 ```
 
 注意: `severity`は`import_guard:`と同じインデントレベルに配置する必要があります（ネストしない）。

@@ -31,14 +31,14 @@ analyzer:
 
 ### Configure Severity (Optional)
 
-By default, violations are reported as errors. You can change the severity to `warning` or `info`:
+By default, violations are reported as warnings. You can change the severity to `error` or `info`:
 
 ```yaml
 # analysis_options.yaml
 custom_lint:
   rules:
     - import_guard:
-      severity: warning  # error (default), warning, or info
+      severity: error  # warning (default), error, or info
 ```
 
 Note: `severity` must be at the same indentation level as `import_guard:`, not nested under it.
