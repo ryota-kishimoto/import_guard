@@ -223,7 +223,7 @@ packages:
       path: "../import_guard_core"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "0.0.1"
   io:
     dependency: transitive
     description:

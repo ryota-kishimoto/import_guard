@@ -16,14 +16,14 @@
 
 ```yaml
 dependencies:
-  import_guard: ^1.0.0
+  import_guard: ^0.0.1
 ```
 
 `analysis_options.yaml`で有効化:
 
 ```yaml
 plugins:
-  import_guard: ^1.0.0
+  import_guard: ^0.0.1
 ```
 
 ## 使い方

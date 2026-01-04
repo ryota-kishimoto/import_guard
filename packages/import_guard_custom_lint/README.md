@@ -17,7 +17,7 @@ A custom_lint package to guard imports between packages and folders.
 
 ```yaml
 dev_dependencies:
-  import_guard_custom_lint: ^1.0.0
+  import_guard_custom_lint: ^0.0.1
   custom_lint: ^0.8.0
 ```
 

@@ -18,14 +18,14 @@ An analyzer plugin to guard imports between packages and folders.
 
 ```yaml
 dependencies:
-  import_guard: ^1.0.0
+  import_guard: ^0.0.1
 ```
 
 Enable in `analysis_options.yaml`:
 
 ```yaml
 plugins:
-  import_guard: ^1.0.0
+  import_guard: ^0.0.1
 ```
 
 ## Usage

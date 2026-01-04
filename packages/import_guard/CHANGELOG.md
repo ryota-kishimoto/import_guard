@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0
+## 0.0.1
 
 - Initial release
 - Native analyzer plugin using analysis_server_plugin (Dart 3.10+)
