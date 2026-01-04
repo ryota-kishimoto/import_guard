@@ -15,7 +15,7 @@
 ## インストール
 
 ```yaml
-dependencies:
+dev_dependencies:
   import_guard: ^0.0.1
 ```
 

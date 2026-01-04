@@ -17,7 +17,7 @@ An analyzer plugin to guard imports between packages and folders.
 ## Installation
 
 ```yaml
-dependencies:
+dev_dependencies:
   import_guard: ^0.0.1
 ```
 
