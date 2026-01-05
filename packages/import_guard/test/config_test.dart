@@ -1,6 +1,7 @@
-import 'package:import_guard_core/import_guard_core.dart';
 import 'package:test/test.dart';
 import 'package:yaml/yaml.dart';
+
+import '../lib/src/core/core.dart';
 
 void main() {
   group('ImportGuardConfig', () {

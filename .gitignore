@@ -18,6 +18,9 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# MCP Serena
+.serena/
+
 # VS Code
 .vscode/
 

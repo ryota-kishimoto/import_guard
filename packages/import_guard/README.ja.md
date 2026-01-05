@@ -90,7 +90,6 @@ flutter analyze
 ## 関連パッケージ
 
 - [import_guard_custom_lint](https://pub.dev/packages/import_guard_custom_lint) - custom_lint実装 (Dart 3.6+)
-- [import_guard_core](https://pub.dev/packages/import_guard_core) - コアロジック
 
 ## ライセンス
 

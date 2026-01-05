@@ -1,5 +1,6 @@
-import 'package:import_guard_core/import_guard_core.dart';
 import 'package:test/test.dart';
+
+import '../lib/src/core/core.dart';
 
 void main() {
   group('PatternTrie', () {
@@ -77,8 +78,7 @@ void main() {
       });
 
       test('handles deep nesting', () {
-        final trie = PatternTrie()
-          ..insert('package:my_app/a/b/c/d/**');
+        final trie = PatternTrie()..insert('package:my_app/a/b/c/d/**');
 
         expect(trie.matches('package:my_app/a/b/c/d/e.dart'), isTrue);
         expect(trie.matches('package:my_app/a/b/c/d/e/f/g.dart'), isTrue);

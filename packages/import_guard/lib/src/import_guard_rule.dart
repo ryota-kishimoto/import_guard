@@ -4,15 +4,13 @@ import 'package:analyzer/analysis_rule/rule_visitor_registry.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/error/error.dart';
-import 'package:analyzer/src/dart/error/lint_codes.dart' show DiagnosticSeverity;
-import 'package:import_guard_core/import_guard_core.dart';
+import 'core/core.dart';
 
 /// An analyzer rule that guards imports based on import_guard.yaml configuration.
 class ImportGuardRule extends AnalysisRule {
   static const LintCode code = LintCode(
     'import_guard',
     'This import is not allowed: {0}',
-    severity: DiagnosticSeverity.WARNING,
   );
 
   ImportGuardRule()
