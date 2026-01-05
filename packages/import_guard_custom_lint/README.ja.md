@@ -89,7 +89,6 @@ dart run custom_lint
 ## 関連パッケージ
 
 - [import_guard](https://pub.dev/packages/import_guard) - ネイティブanalyzer plugin (Dart 3.10+)
-- [import_guard_core](https://pub.dev/packages/import_guard_core) - コアロジック
 
 ## ライセンス
 

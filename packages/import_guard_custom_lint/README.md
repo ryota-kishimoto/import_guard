@@ -91,7 +91,6 @@ dart run custom_lint
 ## Related Packages
 
 - [import_guard](https://pub.dev/packages/import_guard) - Native analyzer plugin (Dart 3.10+)
-- [import_guard_core](https://pub.dev/packages/import_guard_core) - Core logic
 
 ## License
 

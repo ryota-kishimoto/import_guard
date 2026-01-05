@@ -92,7 +92,6 @@ flutter analyze
 ## Related Packages
 
 - [import_guard_custom_lint](https://pub.dev/packages/import_guard_custom_lint) - custom_lint implementation (Dart 3.6+)
-- [import_guard_core](https://pub.dev/packages/import_guard_core) - Core logic
 
 ## License
 

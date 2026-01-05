@@ -3,7 +3,7 @@
 import 'package:analyzer/error/error.dart' show ErrorSeverity;
 import 'package:analyzer/error/listener.dart' show ErrorReporter;
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'package:import_guard_core/import_guard_core.dart';
+import 'core/core.dart';
 
 class ImportGuardLint extends DartLintRule {
   ImportGuardLint() : super(code: _code);
