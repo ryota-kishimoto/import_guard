@@ -118,102 +118,125 @@ class ConfigCache {
   factory ConfigCache() => _instance;
   ConfigCache._();
 
-  /// Map: repoRoot -> (Map: configDir -> config)
-  /// Shared across all packages in the same repo.
-  final _configsByRepo = <String, Map<String, ImportGuardConfig>>{};
+  /// Cached repo root (found once, reused forever).
+  String? _repoRoot;
 
-  /// Map: packageRoot -> repoRoot
-  final _repoRoots = <String, String>{};
+  /// All configs in the repo, keyed by directory path.
+  Map<String, ImportGuardConfig>? _allConfigs;
 
-  /// Map: packageRoot -> packageName
-  final _packageNames = <String, String?>{};
-
-  /// Cache: directory path -> list of applicable configs
-  /// This avoids repeated traversal for files in the same directory.
+  /// Cache: directory path -> list of applicable configs.
   final _configsForDirCache = <String, List<ImportGuardConfig>>{};
+
+  /// Cache: directory path -> package name.
+  final _packageNameCache = <String, String?>{};
+
+  /// Cache: directory path -> package root.
+  final _packageRootCache = <String, String?>{};
 
   /// Get all applicable configs for a file path.
   /// Returns configs from file's directory up to repo root.
   /// Stops traversing if a config has `inherit: false`.
-  List<ImportGuardConfig> getConfigsForFile(String filePath, String packageRoot) {
+  List<ImportGuardConfig> getConfigsForFile(String filePath) {
     final dir = p.dirname(filePath);
 
-    // Check directory cache first
+    // Check directory cache first (O(1) lookup)
     final cached = _configsForDirCache[dir];
     if (cached != null) return cached;
 
-    final repoRoot = _getRepoRoot(packageRoot);
-    _ensureRepoLoaded(repoRoot);
+    // Ensure repo is loaded
+    _ensureLoaded(dir);
 
     final configs = <ImportGuardConfig>[];
-    final allConfigs = _configsByRepo[repoRoot] ?? {};
+    final allConfigs = _allConfigs!;
+    final repoRoot = _repoRoot!;
 
     var currentDir = dir;
     while (true) {
       final config = allConfigs[currentDir];
       if (config != null) {
         configs.add(config);
-        // Stop inheriting if this config has inherit: false
         if (!config.inherit) break;
       }
       if (currentDir == repoRoot || currentDir == p.dirname(currentDir)) break;
       currentDir = p.dirname(currentDir);
     }
 
-    // Cache the result for this directory
     _configsForDirCache[dir] = configs;
-
     return configs;
   }
 
-  /// Get cached package name.
-  String? getPackageName(String packageRoot) {
-    if (!_packageNames.containsKey(packageRoot)) {
-      _packageNames[packageRoot] = _loadPackageName(packageRoot);
+  /// Get package name for directory (cached).
+  String? getPackageName(String dir) {
+    if (_packageNameCache.containsKey(dir)) {
+      return _packageNameCache[dir];
     }
-    return _packageNames[packageRoot];
+
+    final packageRoot = getPackageRoot(dir);
+    if (packageRoot == null) {
+      _packageNameCache[dir] = null;
+      return null;
+    }
+
+    if (_packageNameCache.containsKey(packageRoot)) {
+      final name = _packageNameCache[packageRoot];
+      _packageNameCache[dir] = name;
+      return name;
+    }
+
+    final name = _loadPackageName(packageRoot);
+    _packageNameCache[packageRoot] = name;
+    _packageNameCache[dir] = name;
+    return name;
   }
 
-  /// Find package root by looking for pubspec.yaml.
-  /// Returns null if not found.
-  String? findPackageRoot(String filePath) {
-    var dir = Directory(p.dirname(filePath));
-    while (dir.path != dir.parent.path) {
-      if (File(p.join(dir.path, 'pubspec.yaml')).existsSync()) {
-        return dir.path;
-      }
-      dir = dir.parent;
+  /// Get package root for directory (cached).
+  String? getPackageRoot(String dir) {
+    if (_packageRootCache.containsKey(dir)) {
+      return _packageRootCache[dir];
     }
-    return null;
+
+    final packageRoot = _findPackageRoot(dir);
+    _packageRootCache[dir] = packageRoot;
+
+    if (packageRoot != null) {
+      _packageRootCache[packageRoot] = packageRoot;
+    }
+    return packageRoot;
   }
 
-  /// Get repo root for a package, with caching.
-  String _getRepoRoot(String packageRoot) {
-    if (!_repoRoots.containsKey(packageRoot)) {
-      _repoRoots[packageRoot] = _findRepoRoot(packageRoot);
-    }
-    return _repoRoots[packageRoot]!;
-  }
+  /// Ensure repo is loaded. Only does I/O once.
+  void _ensureLoaded(String startDir) {
+    if (_allConfigs != null) return;
 
-  /// Load all import_guard.yaml files (once per repo root).
-  void _ensureRepoLoaded(String repoRoot) {
-    if (_configsByRepo.containsKey(repoRoot)) return;
-
-    final configs = <String, ImportGuardConfig>{};
-    _scanDirectory(Directory(repoRoot), configs);
-    _configsByRepo[repoRoot] = configs;
+    _repoRoot = _findRepoRoot(startDir);
+    _allConfigs = {};
+    _scanDirectory(Directory(_repoRoot!), _allConfigs!);
   }
 
   /// Find repo root by looking for .git directory.
-  String _findRepoRoot(String packageRoot) {
-    var dir = Directory(packageRoot);
+  String _findRepoRoot(String startDir) {
+    var dir = Directory(startDir);
     while (dir.path != dir.parent.path) {
       if (Directory(p.join(dir.path, '.git')).existsSync()) {
         return dir.path;
       }
       dir = dir.parent;
     }
-    return packageRoot; // Fallback to package root if no .git found
+    return startDir; // Fallback if no .git found
+  }
+
+  /// Find package root by looking for pubspec.yaml.
+  String? _findPackageRoot(String startDir) {
+    var dir = Directory(startDir);
+    final repoRoot = _repoRoot;
+    while (dir.path != dir.parent.path) {
+      if (File(p.join(dir.path, 'pubspec.yaml')).existsSync()) {
+        return dir.path;
+      }
+      if (repoRoot != null && dir.path == repoRoot) break;
+      dir = dir.parent;
+    }
+    return null;
   }
 
   /// Recursively scan directory for import_guard.yaml files.
@@ -234,12 +257,10 @@ class ConfigCache {
       }
     }
 
-    // Scan subdirectories
     try {
       for (final entity in dir.listSync()) {
         if (entity is Directory) {
           final name = p.basename(entity.path);
-          // Skip hidden directories and common non-source directories
           if (!name.startsWith('.') &&
               name != 'build' &&
               name != 'node_modules') {

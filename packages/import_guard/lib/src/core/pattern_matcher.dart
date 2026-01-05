@@ -3,8 +3,8 @@ import 'package:path/path.dart' as p;
 /// Utility class for matching import patterns.
 class PatternMatcher {
   final String configDir;
-  final String packageRoot;
   final String? packageName;
+  final String? packageRoot;
 
   /// Pre-computed package prefix for faster matching.
   late final String? _packagePrefix;
@@ -14,8 +14,8 @@ class PatternMatcher {
 
   PatternMatcher({
     required this.configDir,
-    required this.packageRoot,
     this.packageName,
+    this.packageRoot,
   }) {
     _packagePrefix = packageName != null ? 'package:$packageName/' : null;
   }
@@ -98,10 +98,13 @@ class PatternMatcher {
   /// Convert package: import to absolute file path.
   String? _packageImportToPath(String importUri) {
     final prefix = _packagePrefix;
-    if (prefix == null || !importUri.startsWith(prefix)) return null;
+    final root = packageRoot;
+    if (prefix == null || root == null || !importUri.startsWith(prefix)) {
+      return null;
+    }
 
     final relativePath = importUri.substring(prefix.length);
-    return p.join(packageRoot, 'lib', relativePath);
+    return p.join(root, 'lib', relativePath);
   }
 
   /// Check if a file path matches a pattern path.
