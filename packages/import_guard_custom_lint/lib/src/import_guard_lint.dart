@@ -1,9 +1,26 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:analyzer/dart/ast/ast.dart' show AstNode;
 import 'package:analyzer/error/error.dart' show ErrorSeverity;
 import 'package:analyzer/error/listener.dart' show ErrorReporter;
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 import 'core/core.dart';
+
+/// Extension to report errors compatible with both analyzer 6.x and 8.x.
+extension ErrorReporterCompat on ErrorReporter {
+  /// Reports an error at the given node, using the appropriate API
+  /// for the analyzer version.
+  void reportLintForNode(LintCode code, AstNode node, List<Object> arguments) {
+    // Try analyzer 8.x API first (atNode), fall back to 6.x (reportErrorForNode)
+    try {
+      // ignore: avoid_dynamic_calls
+      (this as dynamic).atNode(node, code, arguments: arguments);
+    } on NoSuchMethodError {
+      // ignore: avoid_dynamic_calls
+      (this as dynamic).reportErrorForNode(code, node, arguments);
+    }
+  }
+}
 
 class ImportGuardLint extends DartLintRule {
   ImportGuardLint() : super(code: _code);
@@ -13,10 +30,11 @@ class ImportGuardLint extends DartLintRule {
     problemMessage: "Import of '{0}' is not allowed by '{1}'.",
     errorSeverity: ErrorSeverity.WARNING,
   );
+
   final _configCache = ConfigCache();
 
-  /// Cache for package root lookups to avoid repeated filesystem traversal.
-  static final _packageRootCache = <String, String?>{};
+  /// Cache for PatternMatcher instances per config directory.
+  static final _matcherCache = <String, PatternMatcher>{};
 
   @override
   void run(
@@ -25,31 +43,27 @@ class ImportGuardLint extends DartLintRule {
     CustomLintContext context,
   ) {
     final filePath = resolver.source.fullName;
-    final packageRoot = _findPackageRoot(filePath);
-    if (packageRoot == null) return;
+    final fileDir = filePath.substring(0, filePath.lastIndexOf('/'));
 
-    final configs = _configCache.getConfigsForFile(filePath, packageRoot);
+    final configs = _configCache.getConfigsForFile(filePath);
     if (configs.isEmpty) return;
 
-    final packageName = _configCache.getPackageName(packageRoot);
+    final packageName = _configCache.getPackageName(fileDir);
+    final packageRoot = _configCache.getPackageRoot(fileDir);
 
     context.registry.addImportDirective((node) {
       final importUri = node.uri.stringValue;
       if (importUri == null) return;
 
       for (final config in configs) {
-        final matcher = PatternMatcher(
-          configDir: config.configDir,
-          packageRoot: packageRoot,
-          packageName: packageName,
-        );
+        final matcher = _getOrCreateMatcher(config, packageName, packageRoot);
 
         // Check if import is denied
         if (_isDenied(importUri, config, matcher, filePath)) {
-          reporter.atNode(
-            node,
+          reporter.reportLintForNode(
             _code,
-            arguments: [importUri, config.configFilePath],
+            node,
+            [importUri, config.configFilePath],
           );
           return;
         }
@@ -57,15 +71,34 @@ class ImportGuardLint extends DartLintRule {
         // Check if import is not allowed (when allow list is specified)
         if (config.hasAllowRules &&
             !_isAllowed(importUri, config, matcher, filePath)) {
-          reporter.atNode(
-            node,
+          reporter.reportLintForNode(
             _code,
-            arguments: [importUri, config.configFilePath],
+            node,
+            [importUri, config.configFilePath],
           );
           return;
         }
       }
     });
+  }
+
+  /// Get or create a cached PatternMatcher for the given config.
+  PatternMatcher _getOrCreateMatcher(
+    ImportGuardConfig config,
+    String? packageName,
+    String? packageRoot,
+  ) {
+    final cacheKey = config.configDir;
+    var matcher = _matcherCache[cacheKey];
+    if (matcher == null) {
+      matcher = PatternMatcher(
+        configDir: config.configDir,
+        packageName: packageName,
+        packageRoot: packageRoot,
+      );
+      _matcherCache[cacheKey] = matcher;
+    }
+    return matcher;
   }
 
   /// Returns true if the import matches any deny pattern.
@@ -75,12 +108,10 @@ class ImportGuardLint extends DartLintRule {
     PatternMatcher matcher,
     String filePath,
   ) {
-    // Fast path: check absolute patterns using Trie
     if (config.denyPatternTrie.matches(importUri)) {
       return true;
     }
 
-    // Slow path: check relative patterns
     for (final pattern in config.denyRelativePatterns) {
       if (matcher.matches(
         importUri: importUri,
@@ -101,12 +132,10 @@ class ImportGuardLint extends DartLintRule {
     PatternMatcher matcher,
     String filePath,
   ) {
-    // Fast path: check absolute patterns using Trie
     if (config.allowPatternTrie.matches(importUri)) {
       return true;
     }
 
-    // Slow path: check relative patterns
     for (final pattern in config.allowRelativePatterns) {
       if (matcher.matches(
         importUri: importUri,
@@ -118,16 +147,5 @@ class ImportGuardLint extends DartLintRule {
     }
 
     return false;
-  }
-
-  String? _findPackageRoot(String filePath) {
-    // Check cache first
-    if (_packageRootCache.containsKey(filePath)) {
-      return _packageRootCache[filePath];
-    }
-
-    final result = _configCache.findPackageRoot(filePath);
-    _packageRootCache[filePath] = result;
-    return result;
   }
 }
