@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.8
+
+- Update SDK constraint from ^3.4.0 to ^3.6.0
+- Update analyzer constraint from >=6.0.0 to >=7.0.0
+- Update custom_lint_builder constraint from >=0.6.2 <0.8.0 to >=0.7.5 <0.9.0
+- Add comprehensive version compatibility documentation
+- All custom_lint versions 0.7.5-0.8.1 now work with IDE
+
 ## 0.0.7
 
 - Cap custom_lint_builder at <0.8.0 for IDE compatibility
