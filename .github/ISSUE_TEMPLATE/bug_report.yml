@@ -1,0 +1,91 @@
+name: Bug Report
+description: Report a bug in import_guard
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package are you using?
+      options:
+        - import_guard
+        - import_guard_custom_lint
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package Version
+      description: What version of the package are you using?
+      placeholder: "0.0.6"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Create `import_guard.yaml` with...
+        2. Run `dart analyze`
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Please paste your `import_guard.yaml` configuration.
+      render: yaml
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide your environment information.
+      placeholder: |
+        - Dart SDK: 3.10.0
+        - OS: macOS 14.0
+        - IDE: VS Code 1.85.0
+        - custom_lint version (if using import_guard_custom_lint): 0.7.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
