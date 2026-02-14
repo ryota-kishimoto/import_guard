@@ -1,10 +1,9 @@
 import 'dart:io';
 
+import 'package:import_guard_custom_lint/src/core/core.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:yaml/yaml.dart';
-
-import 'package:import_guard_custom_lint/src/core/core.dart';
 
 void main() {
   group('ImportGuardConfig', () {

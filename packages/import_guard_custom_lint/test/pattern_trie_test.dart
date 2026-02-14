@@ -1,6 +1,5 @@
-import 'package:test/test.dart';
-
 import 'package:import_guard_custom_lint/src/core/core.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('PatternTrie', () {
