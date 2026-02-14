@@ -52,7 +52,7 @@ class PatternTrie {
     var node = _root;
 
     for (final segment in segments) {
-      node = node.children.putIfAbsent(segment, () => TrieNode());
+      node = node.children.putIfAbsent(segment, TrieNode.new);
     }
 
     // Mark this node as end of pattern
