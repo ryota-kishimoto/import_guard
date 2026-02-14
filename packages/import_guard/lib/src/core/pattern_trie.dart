@@ -116,7 +116,8 @@ class PatternTrie {
       }
 
       final parts = rest.split('/');
-      // Combine prefix with first part: "package:" + "my_app" = "package:my_app"
+      // Combine prefix with first part:
+      // "package:" + "my_app" = "package:my_app"
       return [prefix + parts.first, ...parts.skip(1)];
     }
 

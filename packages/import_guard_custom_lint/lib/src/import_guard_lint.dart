@@ -10,8 +10,13 @@ import 'package:import_guard_custom_lint/src/core/core.dart';
 extension ErrorReporterCompat on ErrorReporter {
   /// Reports an error at the given node, using the appropriate API
   /// for the analyzer version.
-  void reportLintForNode(LintCode code, AstNode node, List<Object> arguments) {
-    // Try analyzer 8.x API first (atNode), fall back to 6.x (reportErrorForNode)
+  void reportLintForNode(
+    LintCode code,
+    AstNode node,
+    List<Object> arguments,
+  ) {
+    // Try analyzer 8.x API first (atNode),
+    // fall back to 6.x (reportErrorForNode)
     try {
       // ignore: avoid_dynamic_calls
       (this as dynamic).atNode(node, code, arguments: arguments);
@@ -22,7 +27,8 @@ extension ErrorReporterCompat on ErrorReporter {
   }
 }
 
-/// A custom_lint rule that guards imports based on import_guard.yaml configuration.
+/// A custom_lint rule that guards imports based on
+/// import_guard.yaml configuration.
 class ImportGuardLint extends DartLintRule {
   /// Creates an [ImportGuardLint] instance.
   ImportGuardLint() : super(code: _code);

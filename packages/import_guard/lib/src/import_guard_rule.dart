@@ -6,7 +6,8 @@ import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:import_guard/src/core/core.dart';
 
-/// An analyzer rule that guards imports based on import_guard.yaml configuration.
+/// An analyzer rule that guards imports based on
+/// import_guard.yaml configuration.
 class ImportGuardRule extends AnalysisRule {
   /// The lint code reported when a denied import is detected.
   static const LintCode code = LintCode(
@@ -18,7 +19,8 @@ class ImportGuardRule extends AnalysisRule {
   ImportGuardRule()
       : super(
           name: 'import_guard',
-          description: 'Guards imports based on import_guard.yaml configuration.',
+          description:
+              'Guards imports based on import_guard.yaml configuration.',
         );
 
   @override

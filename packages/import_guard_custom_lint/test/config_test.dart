@@ -227,7 +227,8 @@ allow:
       tempDir = Directory.systemTemp.createTempSync('import_guard_test_');
       repoRoot = tempDir.path;
 
-      // Create pubspec.yaml to mark package root (used as root for config scanning)
+      // Create pubspec.yaml to mark package root
+      // (used as root for config scanning)
       File(p.join(repoRoot, 'pubspec.yaml')).writeAsStringSync('name: test\n');
     });
 
@@ -494,13 +495,16 @@ deny:
         stopwatch.elapsedMilliseconds,
         lessThan(200),
         reason:
-            '10000 getConfigsForFile calls took ${stopwatch.elapsedMilliseconds}ms, expected < 200ms',
+            '10000 getConfigsForFile calls took '
+            '${stopwatch.elapsedMilliseconds}ms, expected < 200ms',
       );
 
       // Print actual time for visibility
       // ignore: avoid_print
       print(
-          'Performance: 10000 calls completed in ${stopwatch.elapsedMilliseconds}ms');
+        'Performance: 10000 calls completed in '
+        '${stopwatch.elapsedMilliseconds}ms',
+      );
     });
   });
 }

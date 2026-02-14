@@ -156,7 +156,8 @@ class ConfigCache {
   /// Returns configs from file's directory up to repo root.
   /// Stops traversing if a config has `inherit: false`.
   List<ImportGuardConfig> getConfigsForFile(String filePath) {
-    // Use lastIndexOf instead of p.dirname for speed (14ms -> 1ms per 10k calls)
+    // Use lastIndexOf instead of p.dirname for speed
+    // (14ms -> 1ms per 10k calls)
     final lastSlash = filePath.lastIndexOf('/');
     final dir = lastSlash > 0 ? filePath.substring(0, lastSlash) : filePath;
 
@@ -234,7 +235,8 @@ class ConfigCache {
     _scanDirectory(Directory(_repoRoot!), _allConfigs!);
   }
 
-  /// Find package root by looking for pubspec.yaml (used as root for config scanning).
+  /// Find package root by looking for pubspec.yaml
+  /// (used as root for config scanning).
   String _findRepoRoot(String startDir) {
     var dir = Directory(startDir);
     while (dir.path != dir.parent.path) {
