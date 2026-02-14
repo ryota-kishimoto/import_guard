@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
-import 'pattern_trie.dart';
+import 'package:import_guard/src/core/pattern_trie.dart';
 
 /// Configuration for import_guard loaded from import_guard.yaml
 class ImportGuardConfig {

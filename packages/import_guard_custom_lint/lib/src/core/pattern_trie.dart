@@ -37,8 +37,8 @@ class PatternTrie {
   /// - `package:foo/**` (all descendants)
   /// - `dart:mirrors` (exact match)
   void insert(String pattern) {
-    MatchType matchType = MatchType.exact;
-    String normalizedPattern = pattern;
+    var matchType = MatchType.exact;
+    var normalizedPattern = pattern;
 
     if (pattern.endsWith('/**')) {
       matchType = MatchType.descendants;
@@ -126,8 +126,8 @@ class PatternTrie {
 
   /// Get statistics about the Trie (for debugging).
   Map<String, int> get stats {
-    int nodeCount = 0;
-    int patternCount = 0;
+    var nodeCount = 0;
+    var patternCount = 0;
 
     void traverse(TrieNode node) {
       nodeCount++;

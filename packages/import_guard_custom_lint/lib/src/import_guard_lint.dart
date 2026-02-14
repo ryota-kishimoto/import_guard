@@ -4,7 +4,7 @@ import 'package:analyzer/dart/ast/ast.dart' show AstNode;
 import 'package:analyzer/error/error.dart' show ErrorSeverity;
 import 'package:analyzer/error/listener.dart' show ErrorReporter;
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'core/core.dart';
+import 'package:import_guard_custom_lint/src/core/core.dart';
 
 /// Extension to report errors compatible with both analyzer 6.x and 8.x.
 extension ErrorReporterCompat on ErrorReporter {

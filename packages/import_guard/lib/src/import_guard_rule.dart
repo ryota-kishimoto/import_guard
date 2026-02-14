@@ -4,7 +4,7 @@ import 'package:analyzer/analysis_rule/rule_visitor_registry.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/error/error.dart';
-import 'core/core.dart';
+import 'package:import_guard/src/core/core.dart';
 
 /// An analyzer rule that guards imports based on import_guard.yaml configuration.
 class ImportGuardRule extends AnalysisRule {
