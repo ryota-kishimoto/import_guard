@@ -238,8 +238,7 @@ allow:
 
     test('getConfigsForFile returns cached result for same directory', () {
       // Create a config file
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
 deny:
   - dart:mirrors
@@ -268,8 +267,7 @@ deny:
 name: test_package
 ''');
 
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
 
       final cache = ConfigCache();
 
@@ -285,10 +283,8 @@ name: test_package
     test('getPackageRoot returns cached result', () {
       // pubspec.yaml already exists from setUp
 
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
-      final srcDir = Directory(p.join(libDir.path, 'src'));
-      srcDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
+      final srcDir = Directory(p.join(libDir.path, 'src'))..createSync();
 
       final cache = ConfigCache();
 
@@ -303,12 +299,10 @@ name: test_package
 
     test('scans all import_guard.yaml files once', () {
       // Create nested structure with multiple configs
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
-      final domainDir = Directory(p.join(libDir.path, 'domain'));
-      domainDir.createSync();
-      final dataDir = Directory(p.join(libDir.path, 'data'));
-      dataDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
+      final domainDir = Directory(p.join(libDir.path, 'domain'))
+        ..createSync();
+      final dataDir = Directory(p.join(libDir.path, 'data'))..createSync();
 
       // Root config
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
@@ -349,10 +343,9 @@ deny:
     });
 
     test('inherit: false stops config inheritance', () {
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
-      final legacyDir = Directory(p.join(libDir.path, 'legacy'));
-      legacyDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
+      final legacyDir = Directory(p.join(libDir.path, 'legacy'))
+        ..createSync();
 
       // Root config
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
@@ -473,10 +466,9 @@ deny:
         specific,
       ];
 
-      final cache = ConfigCache();
-
-      // Warm up - trigger initial scan
-      cache.getConfigsForFile(p.join(lib.path, 'main.dart'));
+      final cache = ConfigCache()
+        // Warm up - trigger initial scan
+        ..getConfigsForFile(p.join(lib.path, 'main.dart'));
 
       // Now measure 10000 calls across all directories
       final stopwatch = Stopwatch()..start();

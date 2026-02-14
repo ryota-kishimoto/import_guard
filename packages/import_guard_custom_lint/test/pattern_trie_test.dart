@@ -28,7 +28,9 @@ void main() {
         expect(trie.matches('package:my_app/data/repo.dart'), isTrue);
         expect(trie.matches('package:my_app/data/remote/api.dart'), isTrue);
         expect(
-            trie.matches('package:my_app/data/local/db/schema.dart'), isTrue);
+          trie.matches('package:my_app/data/local/db/schema.dart'),
+          isTrue,
+        );
         expect(trie.matches('package:my_app/domain/user.dart'), isFalse);
       });
     });

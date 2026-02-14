@@ -1,3 +1,4 @@
+// Uses deprecated APIs for backward compatibility with analyzer 6.x.
 // ignore_for_file: deprecated_member_use
 
 import 'package:analyzer/dart/ast/ast.dart' show AstNode;
@@ -18,9 +19,13 @@ extension ErrorReporterCompat on ErrorReporter {
     // Try analyzer 8.x API first (atNode),
     // fall back to 6.x (reportErrorForNode)
     try {
+      // Dynamic dispatch to support both analyzer 6.x and 8.x APIs.
       // ignore: avoid_dynamic_calls
       (this as dynamic).atNode(node, code, arguments: arguments);
+      // Intentionally catching NoSuchMethodError for API detection.
+      // ignore: avoid_catching_errors
     } on NoSuchMethodError {
+      // Dynamic dispatch for analyzer 6.x fallback.
       // ignore: avoid_dynamic_calls
       (this as dynamic).reportErrorForNode(code, node, arguments);
     }

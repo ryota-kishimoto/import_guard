@@ -9,12 +9,6 @@ import 'package:import_guard/src/core/core.dart';
 /// An analyzer rule that guards imports based on
 /// import_guard.yaml configuration.
 class ImportGuardRule extends AnalysisRule {
-  /// The lint code reported when a denied import is detected.
-  static const LintCode code = LintCode(
-    'import_guard',
-    "Import of '{0}' is not allowed by '{1}'.",
-  );
-
   /// Creates an [ImportGuardRule] instance.
   ImportGuardRule()
       : super(
@@ -22,6 +16,12 @@ class ImportGuardRule extends AnalysisRule {
           description:
               'Guards imports based on import_guard.yaml configuration.',
         );
+
+  /// The lint code reported when a denied import is detected.
+  static const LintCode code = LintCode(
+    'import_guard',
+    "Import of '{0}' is not allowed by '{1}'.",
+  );
 
   @override
   LintCode get diagnosticCode => code;
