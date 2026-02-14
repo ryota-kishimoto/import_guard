@@ -2,8 +2,13 @@ import 'package:path/path.dart' as p;
 
 /// Utility class for matching import patterns.
 class PatternMatcher {
+  /// Directory path where the config file is located.
   final String configDir;
+
+  /// Name of the Dart package, used for resolving package: imports.
   final String? packageName;
+
+  /// Root directory of the Dart package.
   final String? packageRoot;
 
   /// Pre-computed package prefix for faster matching.
@@ -12,6 +17,7 @@ class PatternMatcher {
   /// Cache for normalized pattern paths.
   final _normalizedPatternCache = <String, String>{};
 
+  /// Creates a [PatternMatcher] for the given config directory and package.
   PatternMatcher({
     required this.configDir,
     this.packageName,

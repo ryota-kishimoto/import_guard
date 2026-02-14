@@ -7,8 +7,13 @@ import 'pattern_trie.dart';
 
 /// Configuration for import_guard loaded from import_guard.yaml
 class ImportGuardConfig {
+  /// List of denied import patterns.
   final List<String> deny;
+
+  /// List of allowed import patterns.
   final List<String> allow;
+
+  /// Directory path where the config file is located.
   final String configDir;
 
   /// Path to the import_guard.yaml file that defined this config.
@@ -44,10 +49,13 @@ class ImportGuardConfig {
     required this.allowRelativePatterns,
   });
 
-  // Legacy getters for backward compatibility
+  /// Legacy getter for [denyPatternTrie].
   PatternTrie get absolutePatternTrie => denyPatternTrie;
+
+  /// Legacy getter for [denyRelativePatterns].
   List<String> get relativePatterns => denyRelativePatterns;
 
+  /// Creates an [ImportGuardConfig] from a parsed YAML map.
   factory ImportGuardConfig.fromYaml(
     YamlMap yaml,
     String configDir,
@@ -115,6 +123,8 @@ class ImportGuardConfig {
 /// Scans all configs once per repo root for better performance.
 class ConfigCache {
   static final _instance = ConfigCache._();
+
+  /// Returns the singleton [ConfigCache] instance.
   factory ConfigCache() => _instance;
   ConfigCache._();
 

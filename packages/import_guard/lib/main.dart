@@ -6,6 +6,7 @@ import 'src/import_guard_rule.dart';
 /// The entry point for the import_guard analyzer plugin.
 Plugin get plugin => ImportGuardPlugin();
 
+/// The import_guard analyzer plugin that registers lint rules.
 class ImportGuardPlugin extends Plugin {
   @override
   String get name => 'import_guard';

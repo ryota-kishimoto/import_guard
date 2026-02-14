@@ -22,7 +22,9 @@ extension ErrorReporterCompat on ErrorReporter {
   }
 }
 
+/// A custom_lint rule that guards imports based on import_guard.yaml configuration.
 class ImportGuardLint extends DartLintRule {
+  /// Creates an [ImportGuardLint] instance.
   ImportGuardLint() : super(code: _code);
 
   static const _code = LintCode(

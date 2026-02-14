@@ -12,6 +12,7 @@ enum MatchType {
 
 /// A node in the pattern Trie.
 class TrieNode {
+  /// Child nodes keyed by path segment.
   final Map<String, TrieNode> children = {};
 
   /// Non-null if this node represents the end of a pattern.
@@ -23,6 +24,9 @@ class TrieNode {
 /// Instead of checking each pattern one by one O(patterns × string_length),
 /// we can match in O(string_length) by traversing the Trie once.
 class PatternTrie {
+  /// Creates an empty [PatternTrie].
+  PatternTrie();
+
   final TrieNode _root = TrieNode();
 
   /// Insert a pattern into the Trie.
