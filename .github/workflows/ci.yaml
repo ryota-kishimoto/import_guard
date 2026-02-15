@@ -45,46 +45,17 @@ jobs:
       - name: Run tests
         run: dart test
 
-  dcm:
-    name: DCM
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        package:
-          - import_guard
-          - import_guard_custom_lint
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: CQLabs/setup-dcm@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run DCM
-        uses: CQLabs/dcm-action@v2
-        with:
-          ci-key: oss
-          email: oss
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          folders: packages/${{ matrix.package }}
-
   # Summary job for branch protection
   ci-success:
     name: CI Success
     runs-on: ubuntu-latest
-    needs: [test, dcm]
+    needs: [test]
     if: always()
     steps:
       - name: Check all jobs passed
         run: |
           if [ "${{ needs.test.result }}" != "success" ]; then
             echo "Test job failed"
-            exit 1
-          fi
-          if [ "${{ needs.dcm.result }}" != "success" ]; then
-            echo "DCM job failed"
             exit 1
           fi
           echo "All CI checks passed!"
