@@ -4,20 +4,23 @@ import 'package:analyzer/analysis_rule/rule_visitor_registry.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/error/error.dart';
-import 'core/core.dart';
+import 'package:import_guard/src/core/core.dart';
 
-/// An analyzer rule that guards imports based on import_guard.yaml configuration.
+/// An analyzer rule that guards imports based on
+/// import_guard.yaml configuration.
 class ImportGuardRule extends AnalysisRule {
+  /// Creates an [ImportGuardRule] instance.
+  ImportGuardRule()
+    : super(
+        name: 'import_guard',
+        description: 'Guards imports based on import_guard.yaml configuration.',
+      );
+
+  /// The lint code reported when a denied import is detected.
   static const LintCode code = LintCode(
     'import_guard',
     "Import of '{0}' is not allowed by '{1}'.",
   );
-
-  ImportGuardRule()
-      : super(
-          name: 'import_guard',
-          description: 'Guards imports based on import_guard.yaml configuration.',
-        );
 
   @override
   LintCode get diagnosticCode => code;

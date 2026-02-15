@@ -1,6 +1,6 @@
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
-import 'src/import_guard_lint.dart';
+import 'package:import_guard_custom_lint/src/import_guard_lint.dart';
 
 /// Entry point for custom_lint plugin.
 PluginBase createPlugin() => _ImportGuardPlugin();

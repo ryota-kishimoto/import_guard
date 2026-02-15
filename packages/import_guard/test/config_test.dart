@@ -1,20 +1,21 @@
 import 'dart:io';
 
+import 'package:import_guard/src/core/core.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:yaml/yaml.dart';
 
-import '../lib/src/core/core.dart';
-
 void main() {
   group('ImportGuardConfig', () {
     test('parses deny list from yaml', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 deny:
   - package:my_app/data/**
   - package:my_app/presentation/**
   - dart:mirrors
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -32,9 +33,11 @@ deny:
     });
 
     test('handles empty deny list', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 deny: []
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -46,9 +49,11 @@ deny: []
     });
 
     test('handles missing deny key', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 other_key: value
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -60,11 +65,13 @@ other_key: value
     });
 
     test('parses relative patterns', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 deny:
   - ../presentation/**
   - ./internal/*
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -72,17 +79,16 @@ deny:
         '/app/lib/domain/import_guard.yaml',
       );
 
-      expect(config.deny, [
-        '../presentation/**',
-        './internal/*',
-      ]);
+      expect(config.deny, ['../presentation/**', './internal/*']);
     });
 
     test('stores configFilePath correctly', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 deny:
   - dart:mirrors
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -94,10 +100,12 @@ deny:
     });
 
     test('inherit defaults to true', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 deny:
   - dart:mirrors
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -109,11 +117,13 @@ deny:
     });
 
     test('parses inherit: false', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 inherit: false
 deny:
   - dart:mirrors
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -125,11 +135,13 @@ deny:
     });
 
     test('parses inherit: true explicitly', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 inherit: true
 deny:
   - dart:mirrors
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -141,12 +153,14 @@ deny:
     });
 
     test('parses allow list from yaml', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 allow:
   - package:my_app/domain/**
   - dart:core
   - dart:async
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -163,10 +177,12 @@ allow:
     });
 
     test('allow defaults to empty list', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 deny:
   - dart:mirrors
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -179,12 +195,14 @@ deny:
     });
 
     test('parses allow and deny together', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 allow:
   - package:my_app/**
 deny:
   - package:my_app/data/**
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -198,12 +216,14 @@ deny:
     });
 
     test('separates allow patterns into absolute and relative', () {
-      final yaml = loadYaml('''
+      final yaml =
+          loadYaml('''
 allow:
   - package:my_app/domain/**
   - ../utils/**
   - ./models/*
-''') as YamlMap;
+''')
+              as YamlMap;
 
       final config = ImportGuardConfig.fromYaml(
         yaml,
@@ -211,8 +231,10 @@ allow:
         '/app/lib/domain/import_guard.yaml',
       );
 
-      expect(config.allowPatternTrie.matches('package:my_app/domain/user.dart'),
-          isTrue);
+      expect(
+        config.allowPatternTrie.matches('package:my_app/domain/user.dart'),
+        isTrue,
+      );
       expect(config.allowRelativePatterns, ['../utils/**', './models/*']);
     });
   });
@@ -228,7 +250,8 @@ allow:
       tempDir = Directory.systemTemp.createTempSync('import_guard_test_');
       repoRoot = tempDir.path;
 
-      // Create pubspec.yaml to mark package root (used as root for config scanning)
+      // Create pubspec.yaml to mark package root
+      // (used as root for config scanning)
       File(p.join(repoRoot, 'pubspec.yaml')).writeAsStringSync('name: test\n');
     });
 
@@ -238,8 +261,7 @@ allow:
 
     test('getConfigsForFile returns cached result for same directory', () {
       // Create a config file
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
 deny:
   - dart:mirrors
@@ -258,8 +280,11 @@ deny:
 
       // Second call for same directory should return same cached list
       final configsB = cache.getConfigsForFile(p.join(libDir.path, 'b.dart'));
-      expect(identical(configsA, configsB), isTrue,
-          reason: 'Should return same cached List instance');
+      expect(
+        identical(configsA, configsB),
+        isTrue,
+        reason: 'Should return same cached List instance',
+      );
     });
 
     test('getPackageName returns cached result', () {
@@ -268,8 +293,7 @@ deny:
 name: test_package
 ''');
 
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
 
       final cache = ConfigCache();
 
@@ -285,10 +309,8 @@ name: test_package
     test('getPackageRoot returns cached result', () {
       // pubspec.yaml already exists from setUp
 
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
-      final srcDir = Directory(p.join(libDir.path, 'src'));
-      srcDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
+      final srcDir = Directory(p.join(libDir.path, 'src'))..createSync();
 
       final cache = ConfigCache();
 
@@ -303,12 +325,9 @@ name: test_package
 
     test('scans all import_guard.yaml files once', () {
       // Create nested structure with multiple configs
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
-      final domainDir = Directory(p.join(libDir.path, 'domain'));
-      domainDir.createSync();
-      final dataDir = Directory(p.join(libDir.path, 'data'));
-      dataDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
+      final domainDir = Directory(p.join(libDir.path, 'domain'))..createSync();
+      final dataDir = Directory(p.join(libDir.path, 'data'))..createSync();
 
       // Root config
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
@@ -334,25 +353,25 @@ deny:
       final cache = ConfigCache();
 
       // Get configs for domain file - should see domain + lib configs
-      final domainConfigs =
-          cache.getConfigsForFile(p.join(domainDir.path, 'user.dart'));
+      final domainConfigs = cache.getConfigsForFile(
+        p.join(domainDir.path, 'user.dart'),
+      );
       expect(domainConfigs, hasLength(2));
       expect(domainConfigs[0].deny, contains('package:http/**'));
       expect(domainConfigs[1].deny, contains('dart:mirrors'));
 
       // Get configs for data file - should see data + lib configs
-      final dataConfigs =
-          cache.getConfigsForFile(p.join(dataDir.path, 'repo.dart'));
+      final dataConfigs = cache.getConfigsForFile(
+        p.join(dataDir.path, 'repo.dart'),
+      );
       expect(dataConfigs, hasLength(2));
       expect(dataConfigs[0].deny, contains('dart:io'));
       expect(dataConfigs[1].deny, contains('dart:mirrors'));
     });
 
     test('inherit: false stops config inheritance', () {
-      final libDir = Directory(p.join(repoRoot, 'lib'));
-      libDir.createSync();
-      final legacyDir = Directory(p.join(libDir.path, 'legacy'));
-      legacyDir.createSync();
+      final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
+      final legacyDir = Directory(p.join(libDir.path, 'legacy'))..createSync();
 
       // Root config
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
@@ -372,8 +391,9 @@ deny:
       final cache = ConfigCache();
 
       // Should only see legacy config, not lib config
-      final configs =
-          cache.getConfigsForFile(p.join(legacyDir.path, 'old.dart'));
+      final configs = cache.getConfigsForFile(
+        p.join(legacyDir.path, 'old.dart'),
+      );
       expect(configs, hasLength(1));
       expect(configs[0].deny, contains('dart:io'));
       expect(configs[0].inherit, isFalse);
@@ -407,7 +427,8 @@ deny:
       final widgets = Directory(p.join(presentation.path, 'widgets'))
         ..createSync();
       final common = Directory(p.join(widgets.path, 'common'))..createSync();
-      final specific = Directory(p.join(widgets.path, 'specific'))..createSync();
+      final specific = Directory(p.join(widgets.path, 'specific'))
+        ..createSync();
 
       // Create import_guard.yaml files at various levels
       File(p.join(lib.path, 'import_guard.yaml')).writeAsStringSync('''
@@ -472,10 +493,9 @@ deny:
         specific,
       ];
 
-      final cache = ConfigCache();
-
-      // Warm up - trigger initial scan
-      cache.getConfigsForFile(p.join(lib.path, 'main.dart'));
+      final cache = ConfigCache()
+        // Warm up - trigger initial scan
+        ..getConfigsForFile(p.join(lib.path, 'main.dart'));
 
       // Now measure 10000 calls across all directories
       final stopwatch = Stopwatch()..start();
@@ -494,13 +514,16 @@ deny:
         stopwatch.elapsedMilliseconds,
         lessThan(200),
         reason:
-            '10000 getConfigsForFile calls took ${stopwatch.elapsedMilliseconds}ms, expected < 200ms',
+            '10000 getConfigsForFile calls took '
+            '${stopwatch.elapsedMilliseconds}ms, expected < 200ms',
       );
 
       // Print actual time for visibility
       // ignore: avoid_print
       print(
-          'Performance: 10000 calls completed in ${stopwatch.elapsedMilliseconds}ms');
+        'Performance: 10000 calls completed in '
+        '${stopwatch.elapsedMilliseconds}ms',
+      );
     });
   });
 }

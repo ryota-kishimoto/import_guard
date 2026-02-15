@@ -1,37 +1,11 @@
 import 'dart:io';
 
+import 'package:import_guard_custom_lint/src/core/pattern_trie.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
-import 'pattern_trie.dart';
-
 /// Configuration for import_guard loaded from import_guard.yaml
 class ImportGuardConfig {
-  final List<String> deny;
-  final List<String> allow;
-  final String configDir;
-
-  /// Path to the import_guard.yaml file that defined this config.
-  final String configFilePath;
-
-  /// Whether to inherit parent directory configs. Defaults to true.
-  final bool inherit;
-
-  /// Pre-built Trie for absolute deny patterns (package:, dart:)
-  final PatternTrie denyPatternTrie;
-
-  /// Relative deny patterns that need context-aware matching
-  final List<String> denyRelativePatterns;
-
-  /// Pre-built Trie for absolute allow patterns (package:, dart:)
-  final PatternTrie allowPatternTrie;
-
-  /// Relative allow patterns that need context-aware matching
-  final List<String> allowRelativePatterns;
-
-  /// Whether this config has allow rules (used for optimization)
-  bool get hasAllowRules => allow.isNotEmpty;
-
   ImportGuardConfig._({
     required this.deny,
     required this.allow,
@@ -44,10 +18,7 @@ class ImportGuardConfig {
     required this.allowRelativePatterns,
   });
 
-  // Legacy getters for backward compatibility
-  PatternTrie get absolutePatternTrie => denyPatternTrie;
-  List<String> get relativePatterns => denyRelativePatterns;
-
+  /// Creates an [ImportGuardConfig] from a parsed YAML map.
   factory ImportGuardConfig.fromYaml(
     YamlMap yaml,
     String configDir,
@@ -109,14 +80,52 @@ class ImportGuardConfig {
       allowRelativePatterns: allowRelativePatterns,
     );
   }
+
+  /// List of denied import patterns.
+  final List<String> deny;
+
+  /// List of allowed import patterns.
+  final List<String> allow;
+
+  /// Directory path where the config file is located.
+  final String configDir;
+
+  /// Path to the import_guard.yaml file that defined this config.
+  final String configFilePath;
+
+  /// Whether to inherit parent directory configs. Defaults to true.
+  final bool inherit;
+
+  /// Pre-built Trie for absolute deny patterns (package:, dart:)
+  final PatternTrie denyPatternTrie;
+
+  /// Relative deny patterns that need context-aware matching
+  final List<String> denyRelativePatterns;
+
+  /// Pre-built Trie for absolute allow patterns (package:, dart:)
+  final PatternTrie allowPatternTrie;
+
+  /// Relative allow patterns that need context-aware matching
+  final List<String> allowRelativePatterns;
+
+  /// Whether this config has allow rules (used for optimization)
+  bool get hasAllowRules => allow.isNotEmpty;
+
+  /// Legacy getter for [denyPatternTrie].
+  PatternTrie get absolutePatternTrie => denyPatternTrie;
+
+  /// Legacy getter for [denyRelativePatterns].
+  List<String> get relativePatterns => denyRelativePatterns;
 }
 
 /// Cache for import_guard.yaml configurations.
 /// Scans all configs once per repo root for better performance.
 class ConfigCache {
-  static final _instance = ConfigCache._();
+  /// Returns the singleton [ConfigCache] instance.
   factory ConfigCache() => _instance;
   ConfigCache._();
+
+  static final _instance = ConfigCache._();
 
   /// Cached repo root (found once, reused forever).
   String? _repoRoot;
@@ -146,7 +155,8 @@ class ConfigCache {
   /// Returns configs from file's directory up to repo root.
   /// Stops traversing if a config has `inherit: false`.
   List<ImportGuardConfig> getConfigsForFile(String filePath) {
-    // Use lastIndexOf instead of p.dirname for speed (14ms -> 1ms per 10k calls)
+    // Use lastIndexOf instead of p.dirname for speed
+    // (14ms -> 1ms per 10k calls)
     final lastSlash = filePath.lastIndexOf('/');
     final dir = lastSlash > 0 ? filePath.substring(0, lastSlash) : filePath;
 
@@ -224,7 +234,8 @@ class ConfigCache {
     _scanDirectory(Directory(_repoRoot!), _allConfigs!);
   }
 
-  /// Find package root by looking for pubspec.yaml (used as root for config scanning).
+  /// Find package root by looking for pubspec.yaml
+  /// (used as root for config scanning).
   String _findRepoRoot(String startDir) {
     var dir = Directory(startDir);
     while (dir.path != dir.parent.path) {
@@ -267,7 +278,7 @@ class ConfigCache {
           configs[dir.path] =
               ImportGuardConfig.fromYaml(yaml, dir.path, configFile.path);
         }
-      } catch (_) {
+      } on Object catch (_) {
         // Ignore invalid yaml files
       }
     }
@@ -283,7 +294,7 @@ class ConfigCache {
           }
         }
       }
-    } catch (_) {
+    } on Object catch (_) {
       // Ignore permission errors
     }
   }
@@ -296,7 +307,7 @@ class ConfigCache {
       final content = pubspecFile.readAsStringSync();
       final yaml = loadYaml(content) as YamlMap?;
       return yaml?['name'] as String?;
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     }
   }

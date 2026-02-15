@@ -1,6 +1,5 @@
+import 'package:import_guard_custom_lint/src/core/core.dart';
 import 'package:test/test.dart';
-
-import '../lib/src/core/core.dart';
 
 void main() {
   group('PatternTrie', () {
@@ -28,7 +27,10 @@ void main() {
 
         expect(trie.matches('package:my_app/data/repo.dart'), isTrue);
         expect(trie.matches('package:my_app/data/remote/api.dart'), isTrue);
-        expect(trie.matches('package:my_app/data/local/db/schema.dart'), isTrue);
+        expect(
+          trie.matches('package:my_app/data/local/db/schema.dart'),
+          isTrue,
+        );
         expect(trie.matches('package:my_app/domain/user.dart'), isFalse);
       });
     });

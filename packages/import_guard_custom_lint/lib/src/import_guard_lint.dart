@@ -1,28 +1,41 @@
+// Uses deprecated APIs for backward compatibility with analyzer 6.x.
 // ignore_for_file: deprecated_member_use
 
 import 'package:analyzer/dart/ast/ast.dart' show AstNode;
 import 'package:analyzer/error/error.dart' show ErrorSeverity;
 import 'package:analyzer/error/listener.dart' show ErrorReporter;
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'core/core.dart';
+import 'package:import_guard_custom_lint/src/core/core.dart';
 
 /// Extension to report errors compatible with both analyzer 6.x and 8.x.
 extension ErrorReporterCompat on ErrorReporter {
   /// Reports an error at the given node, using the appropriate API
   /// for the analyzer version.
-  void reportLintForNode(LintCode code, AstNode node, List<Object> arguments) {
-    // Try analyzer 8.x API first (atNode), fall back to 6.x (reportErrorForNode)
+  void reportLintForNode(
+    LintCode code,
+    AstNode node,
+    List<Object> arguments,
+  ) {
+    // Try analyzer 8.x API first (atNode),
+    // fall back to 6.x (reportErrorForNode)
     try {
+      // Dynamic dispatch to support both analyzer 6.x and 8.x APIs.
       // ignore: avoid_dynamic_calls
       (this as dynamic).atNode(node, code, arguments: arguments);
+      // Intentionally catching NoSuchMethodError for API detection.
+      // ignore: avoid_catching_errors
     } on NoSuchMethodError {
+      // Dynamic dispatch for analyzer 6.x fallback.
       // ignore: avoid_dynamic_calls
       (this as dynamic).reportErrorForNode(code, node, arguments);
     }
   }
 }
 
+/// A custom_lint rule that guards imports based on
+/// import_guard.yaml configuration.
 class ImportGuardLint extends DartLintRule {
+  /// Creates an [ImportGuardLint] instance.
   ImportGuardLint() : super(code: _code);
 
   static const _code = LintCode(

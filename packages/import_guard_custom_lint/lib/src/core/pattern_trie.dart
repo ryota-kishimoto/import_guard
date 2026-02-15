@@ -12,6 +12,7 @@ enum MatchType {
 
 /// A node in the pattern Trie.
 class TrieNode {
+  /// Child nodes keyed by path segment.
   final Map<String, TrieNode> children = {};
 
   /// Non-null if this node represents the end of a pattern.
@@ -23,6 +24,9 @@ class TrieNode {
 /// Instead of checking each pattern one by one O(patterns × string_length),
 /// we can match in O(string_length) by traversing the Trie once.
 class PatternTrie {
+  /// Creates an empty [PatternTrie].
+  PatternTrie();
+
   final TrieNode _root = TrieNode();
 
   /// Insert a pattern into the Trie.
@@ -33,8 +37,8 @@ class PatternTrie {
   /// - `package:foo/**` (all descendants)
   /// - `dart:mirrors` (exact match)
   void insert(String pattern) {
-    MatchType matchType = MatchType.exact;
-    String normalizedPattern = pattern;
+    var matchType = MatchType.exact;
+    var normalizedPattern = pattern;
 
     if (pattern.endsWith('/**')) {
       matchType = MatchType.descendants;
@@ -48,7 +52,7 @@ class PatternTrie {
     var node = _root;
 
     for (final segment in segments) {
-      node = node.children.putIfAbsent(segment, () => TrieNode());
+      node = node.children.putIfAbsent(segment, TrieNode.new);
     }
 
     // Mark this node as end of pattern
@@ -112,7 +116,8 @@ class PatternTrie {
       }
 
       final parts = rest.split('/');
-      // Combine prefix with first part: "package:" + "my_app" = "package:my_app"
+      // Combine prefix with first part:
+      // "package:" + "my_app" = "package:my_app"
       return [prefix + parts.first, ...parts.skip(1)];
     }
 
@@ -122,8 +127,8 @@ class PatternTrie {
 
   /// Get statistics about the Trie (for debugging).
   Map<String, int> get stats {
-    int nodeCount = 0;
-    int patternCount = 0;
+    var nodeCount = 0;
+    var patternCount = 0;
 
     void traverse(TrieNode node) {
       nodeCount++;

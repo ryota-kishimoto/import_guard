@@ -1,6 +1,5 @@
+import 'package:import_guard/src/core/core.dart';
 import 'package:test/test.dart';
-
-import '../lib/src/core/core.dart';
 
 void main() {
   group('matchesAbsolutePattern', () {
