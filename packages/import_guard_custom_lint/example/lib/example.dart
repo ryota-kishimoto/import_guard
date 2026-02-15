@@ -17,6 +17,6 @@ import 'package:import_guard_custom_lint_example/domain/user.dart';
 void main() {
   // Using dart:mirrors (which is denied)
   final mirror = reflectClass(User);
-  print('import_guard_custom_lint example');
+  print('import_guard example');
   print('Class name: ${mirror.simpleName}');
 }
