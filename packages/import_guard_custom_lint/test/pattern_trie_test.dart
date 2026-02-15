@@ -86,6 +86,41 @@ void main() {
         expect(trie.matches('package:my_app/a/b/c/d/e/f/g.dart'), isTrue);
         expect(trie.matches('package:my_app/a/b/c/other.dart'), isFalse);
       });
+
+      test('/** does not match similar directory prefix', () {
+        final trie = PatternTrie()..insert('package:my_app/data/**');
+
+        expect(
+          trie.matches('package:my_app/data_other/repo.dart'),
+          isFalse,
+        );
+        expect(
+          trie.matches('package:my_app/datastore/db.dart'),
+          isFalse,
+        );
+      });
+
+      test('/* does not match similar directory prefix', () {
+        final trie = PatternTrie()..insert('package:my_app/data/*');
+
+        expect(
+          trie.matches('package:my_app/data_other/repo.dart'),
+          isFalse,
+        );
+      });
+
+      test('exact pattern does not match similar prefix', () {
+        final trie = PatternTrie()..insert('package:my_app/data');
+
+        expect(
+          trie.matches('package:my_app/data/repo.dart'),
+          isTrue,
+        );
+        expect(
+          trie.matches('package:my_app/data_other/repo.dart'),
+          isFalse,
+        );
+      });
     });
 
     group('stats', () {
