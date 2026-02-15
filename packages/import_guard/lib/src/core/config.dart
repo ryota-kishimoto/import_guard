@@ -275,8 +275,11 @@ class ConfigCache {
         final content = configFile.readAsStringSync();
         final yaml = loadYaml(content) as YamlMap?;
         if (yaml != null) {
-          configs[dir.path] =
-              ImportGuardConfig.fromYaml(yaml, dir.path, configFile.path);
+          configs[dir.path] = ImportGuardConfig.fromYaml(
+            yaml,
+            dir.path,
+            configFile.path,
+          );
         }
       } on Object catch (_) {
         // Ignore invalid yaml files

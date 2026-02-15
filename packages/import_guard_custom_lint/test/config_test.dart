@@ -305,8 +305,7 @@ name: test_package
     test('scans all import_guard.yaml files once', () {
       // Create nested structure with multiple configs
       final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
-      final domainDir = Directory(p.join(libDir.path, 'domain'))
-        ..createSync();
+      final domainDir = Directory(p.join(libDir.path, 'domain'))..createSync();
       final dataDir = Directory(p.join(libDir.path, 'data'))..createSync();
 
       // Root config
@@ -349,8 +348,7 @@ deny:
 
     test('inherit: false stops config inheritance', () {
       final libDir = Directory(p.join(repoRoot, 'lib'))..createSync();
-      final legacyDir = Directory(p.join(libDir.path, 'legacy'))
-        ..createSync();
+      final legacyDir = Directory(p.join(libDir.path, 'legacy'))..createSync();
 
       // Root config
       File(p.join(libDir.path, 'import_guard.yaml')).writeAsStringSync('''
@@ -491,8 +489,7 @@ deny:
       expect(
         stopwatch.elapsedMilliseconds,
         lessThan(200),
-        reason:
-            '10000 getConfigsForFile calls took '
+        reason: '10000 getConfigsForFile calls took '
             '${stopwatch.elapsedMilliseconds}ms, expected < 200ms',
       );
 

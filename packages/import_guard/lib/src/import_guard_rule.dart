@@ -11,11 +11,10 @@ import 'package:import_guard/src/core/core.dart';
 class ImportGuardRule extends AnalysisRule {
   /// Creates an [ImportGuardRule] instance.
   ImportGuardRule()
-      : super(
-          name: 'import_guard',
-          description:
-              'Guards imports based on import_guard.yaml configuration.',
-        );
+    : super(
+        name: 'import_guard',
+        description: 'Guards imports based on import_guard.yaml configuration.',
+      );
 
   /// The lint code reported when a denied import is detected.
   static const LintCode code = LintCode(
