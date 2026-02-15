@@ -72,6 +72,16 @@ void main() {
           isFalse,
         );
       });
+
+      test('does not match similar prefix', () {
+        expect(
+          PatternMatcher.matchesAbsolutePattern(
+            'package:my_app/data_other/repo.dart',
+            'package:my_app/data/**',
+          ),
+          isFalse,
+        );
+      });
     });
 
     group('/* pattern (direct children only)', () {
@@ -128,6 +138,16 @@ void main() {
             '/app/lib/data/**',
           ),
           isTrue,
+        );
+      });
+
+      test('does not match similar prefix', () {
+        expect(
+          PatternMatcher.pathMatchesPattern(
+            '/app/lib/data_other/repo.dart',
+            '/app/lib/data/**',
+          ),
+          isFalse,
         );
       });
     });
