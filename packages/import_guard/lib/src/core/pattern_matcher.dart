@@ -49,8 +49,8 @@ class PatternMatcher {
   static bool matchesAbsolutePattern(String importUri, String pattern) {
     // Handle ** glob (all descendants)
     if (pattern.endsWith('/**')) {
-      final prefix = pattern.substring(0, pattern.length - 3);
-      return importUri.startsWith(prefix) && importUri.length > prefix.length;
+      final prefix = pattern.substring(0, pattern.length - 2);
+      return importUri.startsWith(prefix);
     }
 
     // Handle * glob (direct children only)
@@ -117,7 +117,7 @@ class PatternMatcher {
   static bool pathMatchesPattern(String filePath, String patternPath) {
     // Handle ** glob
     if (patternPath.endsWith('/**')) {
-      final prefix = patternPath.substring(0, patternPath.length - 3);
+      final prefix = patternPath.substring(0, patternPath.length - 2);
       return filePath.startsWith(prefix);
     }
 
