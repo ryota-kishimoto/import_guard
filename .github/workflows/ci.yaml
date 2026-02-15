@@ -60,12 +60,14 @@ jobs:
 
       - uses: CQLabs/setup-dcm@v2
         with:
-          ci-key: oss
-          email: oss
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run DCM
         uses: CQLabs/dcm-action@v2
         with:
+          ci-key: oss
+          email: oss
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           folders: packages/${{ matrix.package }}
 
   # Summary job for branch protection
