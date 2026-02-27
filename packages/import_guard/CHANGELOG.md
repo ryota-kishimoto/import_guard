@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0
+
+- Widen analyzer constraint to support >=8.2.0 <12.0.0
+- Widen analysis_server_plugin constraint to support >=0.3.0 <1.0.0
+
+## 0.0.8
+
+- Fix: `/**` glob matching similar directory prefixes
+
 ## 0.0.7
 
 - Add developer documentation (CLAUDE.md, version_compatibility.md)
