@@ -3,6 +3,7 @@
 ## 1.0.0
 
 - Stable release
+- Fix: `/**` glob matching similar directory prefixes
 - Sync test thresholds with import_guard package
 
 ## 0.0.8
