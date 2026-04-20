@@ -4,6 +4,7 @@
 
 - Widen analyzer constraint to support `>=8.2.0 <13.0.0` (adds analyzer 12.x support)
 - Allows coexistence with other analyzer plugins pinned to analyzer 12.x
+- Verified on analyzer 12.1.0 (example updated to resolve analyzer 12.x)
 
 ## 0.1.0
 
