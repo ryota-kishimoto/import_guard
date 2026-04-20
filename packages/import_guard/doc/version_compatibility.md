@@ -5,8 +5,8 @@
 | Dependency | Version |
 |------------|---------|
 | Dart SDK | ^3.9.0 |
-| analysis_server_plugin | ^0.3.0 |
-| analyzer | ^8.2.0 |
+| analysis_server_plugin | >=0.3.0 <1.0.0 |
+| analyzer | >=8.2.0 <13.0.0 |
 
 ## analysis_server_plugin
 
@@ -43,12 +43,16 @@ This package uses `analysis_server_plugin`, which is the official Dart analyzer 
 
 ## analyzer version
 
-This package requires analyzer ^8.2.0, which is bundled with Dart 3.9+.
+This package supports analyzer `>=8.2.0 <13.0.0`. The upper bound is widened as
+newer analyzer majors are verified to work, so `import_guard` can coexist with
+other analyzer plugins pinned to a newer analyzer.
 
-| Dart SDK | analyzer version |
-|----------|------------------|
-| 3.9.x | 8.x |
-| 3.10.x | 8.x |
+| analyzer | supported |
+|----------|-----------|
+| 8.x | ✅ |
+| 9.x - 11.x | ✅ (within declared range) |
+| 12.x | ✅ (verified on 12.1.0) |
+| 13.x+ | ❌ (not yet verified) |
 
 ## Choosing the right package
 
@@ -63,7 +67,7 @@ This package requires analyzer ^8.2.0, which is bundled with Dart 3.9+.
 ```yaml
 # pubspec.yaml
 dev_dependencies:
-  import_guard: ^0.0.6
+  import_guard: ^0.2.0
 ```
 
 ```yaml
